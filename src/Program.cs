@@ -8,7 +8,7 @@ using YoutubeExplode.Videos.Streams;
 
 class Program
 {
-    private static TelegramBotClient botClient;
+    private static TelegramBotClient? botClient;
 
     static async Task Main(string[] args)
     {
@@ -98,6 +98,11 @@ class Program
 
     static async Task DownloadYoutubeVideoAsync(long chatId, string url, CancellationToken cancellationToken)
     {
+        if (botClient == null) {
+            Console.WriteLine("Bot client is not initialized");
+            return;
+        }
+
         try
         {
             var youtube = new YoutubeClient();
