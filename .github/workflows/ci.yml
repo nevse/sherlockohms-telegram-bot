@@ -36,10 +36,11 @@ jobs:
       if: ${{ github.ref == 'refs/heads/main' }}
       env:
         USERNAME: ${{ github.actor }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         ref="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
         echo GITHUB_REF - $ref
-        echo ${GITHUB_TOKEN} | docker login ghcr.io -u ${USERNAME} --password-stdin
+        echo ${GH_TOKEN} | docker login ghcr.io -u ${USERNAME} --password-stdin
         docker buildx build --push \
             --build-arg CI=github --build-arg GITHUB_SHA=${GITHUB_SHA} --build-arg GIT_BRANCH=${ref} \
             --platform linux/amd64,linux/arm64 \
