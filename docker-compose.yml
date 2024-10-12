@@ -9,7 +9,7 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        image: ghcr.io/nevse/sherlockohms-telegram-bot:master
+        image: ghcr.io/nevse/sherlockohms-telegram-bot:main
         container_name: sherlockohms-telegram-bot
         hostname: sherlockohms-telegram-bot
         restart: always
