@@ -37,6 +37,8 @@ jobs:
       env:
         USERNAME: ${{ github.actor }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_SHA: ${{ github.sha}}
+        GITHUB_REF: ${{ github.ref}}
       run: |
         ref="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
         echo GITHUB_REF - $ref
@@ -45,3 +47,19 @@ jobs:
             --build-arg CI=github --build-arg GITHUB_SHA=${GITHUB_SHA} --build-arg GIT_BRANCH=${ref} \
             --platform linux/amd64,linux/arm64 \
             -t ghcr.io/nevse/sherlockohms-telegram-bot:${ref} .
+
+    - name: deploy tagged (latest) to ghcr.io
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      env:
+        USERNAME: ${{ github.actor }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_SHA: ${{ github.sha}}
+        GITHUB_REF: ${{ github.ref}}
+      run: |
+        ref="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
+        echo GITHUB_REF - $ref
+        echo ${GH_TOKEN} | docker login ghcr.io -u ${USERNAME} --password-stdin
+        docker buildx build --push \
+            --build-arg CI=github --build-arg GITHUB_SHA=${GITHUB_SHA} --build-arg GIT_BRANCH=${ref} \
+            --platform linux/amd64,linux/arm64 \
+            -t ghcr.io/nevse/sherlockohms-telegram-bot:${ref} -t ghcr.io/nevse/sherlockohms-telegram-bot:latest \
